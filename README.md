@@ -5,7 +5,7 @@ meant to be deployed to <https://render.com>.
 
 ## Develop
 
-Install Ruby 3+ and Postgres 13+.
+Install Ruby 3 and Postgres 14.
 
 Create development database:
 
@@ -71,3 +71,5 @@ Open <http://localhost:2000/health>.
 
 Go to Render Blueprints page at
 <https://dashboard.render.com/blueprints>.
+Click "New Blueprint Instance".
+Enter this repo's URL.
