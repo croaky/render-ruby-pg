@@ -69,12 +69,5 @@ Open <http://localhost:2000/health>.
 
 ## Deploy
 
-Create a new web service in Render at
-<https://dashboard.render.com/web/new>.
-
-Set GitHub URL to this repo
-<https://github.com/croaky/render-ruby-pg>.
-
-Set "Build Command" to `./x build`.
-
-Set "Start Command" to `./x start`.
+Go to Render Blueprints page at
+<https://dashboard.render.com/blueprints>.

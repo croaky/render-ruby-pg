@@ -1,0 +1,23 @@
+# https://render.com/docs/blueprint-spec
+databases:
+  - name: x_db
+    ipAllowList: [] # only allow internal connections
+    postgresMajorVersion: 13 # 12, 13, 14
+
+services:
+  - type: web
+    name: x_web
+    region: oregon # oregon, frankfurt
+    env: ruby
+    buildCommand: "./x build"
+    startCommand: "./x start"
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: DATABASE_POOL_SIZE
+        value: 40
+      - key: DATABASE_URL
+        fromDatabase:
+          name: x_db
+          property: connectionString
