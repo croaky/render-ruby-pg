@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require "date"
-require_relative "lib/x"
 
 usage = <<~EOF
   usage:
@@ -18,6 +17,7 @@ end
 
 if ARGV[0] == "build"
   `bundle install`
+  require_relative "lib/x"
   X::Env.load(root_dir: Dir.pwd)
   X::Database.migrate
   exit 0
@@ -52,6 +52,7 @@ if ARGV[0] == "db"
   end
 
   if ARGV[1] == "migrate"
+    require_relative "lib/x"
     X::Env.load(root_dir: Dir.pwd)
     X::Database.migrate
   end
