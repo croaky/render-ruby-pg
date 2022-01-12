@@ -69,7 +69,6 @@ Open <http://localhost:2000/health>.
 
 ## Deploy
 
-Go to Render Blueprints page at
-<https://dashboard.render.com/blueprints>.
+Go to <https://dashboard.render.com/blueprints>.
 Click "New Blueprint Instance".
 Enter this repo's URL.
