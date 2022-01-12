@@ -1,4 +1,7 @@
 require "rubygems"
+require "bundler"
+
+Bundler.setup(:default)
 
 require "async"
 require "async/http/endpoint"
