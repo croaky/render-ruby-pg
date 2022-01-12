@@ -124,18 +124,6 @@ module X
     end
   end
 
-  class Response
-    attr_accessor :status, :headers, :body
-
-    def initialize
-      @headers = {
-        "Accept" => "application/json",
-        "Access-Control-Allow-Methods" => "OPTIONS,GET,POST",
-        "Content-Type" => "application/json"
-      }
-    end
-  end
-
   class Router
     def initialize
       @routes = {}
@@ -155,11 +143,18 @@ module X
 
     def call(req)
       t = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      resp = X::Response.new
+      resp = Protocol::HTTP::Response.new
+      resp.headers = Protocol::HTTP::Headers[{
+        "Accept" => "application/json",
+        "Access-Control-Allow-Methods" => "OPTIONS,GET,POST",
+        "Content-Type" => "application/json"
+      }]
+      puts req.inspect
+      puts req.method
 
       if !["OPTIONS", "GET", "POST"].include?(req.method)
         resp.status = 405
-        resp.body = %({"err": "#{req.method} method not accepted"})
+        resp.body = %({"err": "#{req.method} not supported. Try OPTIONS, GET, or POST."})
       end
 
       if req.method == "OPTIONS"
@@ -174,7 +169,7 @@ module X
 
         if handler.nil?
           resp.status = 404
-          resp.body = %({"err": "HTTP method not supported. Try OPTIONS, GET, or POST."})
+          resp.body = %({"err": "Route not found."})
         end
       end
 
