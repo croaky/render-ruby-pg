@@ -102,7 +102,7 @@ module X
         SQL
       end
       if ENV.fetch("APP_ENV") == "dev"
-        `pg_dump --schema-only render_dev > db/schema.sql`
+        `pg_dump --schema-only x_dev > db/schema.sql`
       end
     end
   end

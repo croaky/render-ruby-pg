@@ -10,7 +10,7 @@ Install Ruby 3 and Postgres 14.
 Create development database:
 
 ```
-createdb render_dev
+createdb x_dev --owner=postgres
 ```
 
 Build project:

@@ -1,4 +1,4 @@
 APP_ENV=dev
-DATABASE_POOL_SIZE=64
-DATABASE_URL=postgres:///render_dev?sslmode=disable
+DATABASE_POOL_SIZE=40
+DATABASE_URL=postgres://postgres:@localhost/x_dev
 PORT=2000

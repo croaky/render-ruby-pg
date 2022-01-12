@@ -2,7 +2,7 @@
 databases:
   - name: x_db
     ipAllowList: [] # only allow internal connections
-    postgresMajorVersion: 13 # 12, 13, 14
+    postgresMajorVersion: 14 # 14, 13, 12
 
 services:
   - type: web
