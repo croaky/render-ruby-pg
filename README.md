@@ -3,14 +3,20 @@
 A lightweight JSON HTTP API with Ruby and Postgres
 meant to be deployed to <https://render.com>.
 
-## Tutorial
+## Develop
 
 Install Ruby 3+ and Postgres 13+.
 
-Initialize project:
+Create development database:
 
 ```
-./x init
+createdb render_dev
+```
+
+Build project:
+
+```
+./x build
 ```
 
 See project structure:
@@ -39,7 +45,7 @@ See `api.rb`:
 ```ruby
 require "x"
 
-X::Env.load(root_dir: __dir__)
+X::Env.load(root_dir: Dir.pwd)
 
 X::API.serve do |db|
   get "/health" do |req, resp|
@@ -53,16 +59,22 @@ X::API.serve do |db|
 end
 ```
 
-Migrate the database:
-
-```
-./x db migrate
-```
-
 Start the web server:
 
 ```
-./x api
+./x start
 ```
 
 Open <http://localhost:2000/health>.
+
+## Deploy
+
+Create a new web service in Render at
+<https://dashboard.render.com/web/new>.
+
+Set GitHub URL to this repo
+<https://github.com/croaky/render-ruby-pg>.
+
+Set "Build Command" to `./x build`.
+
+Set "Start Command" to `./x start`.
