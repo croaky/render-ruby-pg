@@ -1,8 +1,6 @@
 require_relative "../lib/x"
 
-X::Env.load(root_dir: Dir.pwd)
-
-X::API.serve do |db|
+X::API.routes do |db|
   get "/health" do |req, resp|
     db.exec "SELECT 1"
     [

@@ -43,14 +43,10 @@ See project structure:
 └── x
 ```
 
-See `api.rb`:
+See `api/routes.rb`:
 
 ```ruby
-require "x"
-
-X::Env.load(root_dir: Dir.pwd)
-
-X::API.serve do |db|
+X::API.routes do |db|
   get "/health" do |req, resp|
     db.exec "SELECT 1"
     [

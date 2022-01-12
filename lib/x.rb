@@ -10,41 +10,43 @@ require "connection_pool"
 require "json"
 require "pg"
 
-module X
-  class Env
-    def self.load(root_dir:)
-      # fallbacks
-      ENV["APP_ENV"] ||= "dev"
-      ENV["DATABASE_POOL_SIZE"] ||= "40"
-      ENV["PORT"] ||= "2000"
+env_file = "#{Dir.pwd}/env/#{ENV.fetch("APP_ENV", "dev")}"
 
-      path = "#{root_dir}/env/#{ENV.fetch("APP_ENV")}"
-
-      if File.exist?(path)
-        File.readlines(path).each do |line|
-          key, val = line.split("=", 2)
-          ENV[key] = val.chomp
-        end
-      end
-    end
+if File.exist?(env_file)
+  File.readlines(env_file).each do |line|
+    key, val = line.split("=", 2)
+    ENV[key] = val.chomp
   end
+end
 
+module X
   class API
-    def self.serve(&block)
-      db = X::Database.new(
-        ENV.fetch("DATABASE_URL"),
-        ENV.fetch("DATABASE_POOL_SIZE")
-      )
-      router = X::Router.new
-      router.instance_exec(db, &block)
-      server = Async::HTTP::Server.new(
-        router,
-        Async::HTTP::Endpoint.parse("http://0.0.0.0:#{ENV.fetch("PORT")}")
-      )
+    class << self
+      attr_accessor :router
 
-      Async do |task|
-        task.async do
-          server.run
+      def routes(&block)
+        db = X::Database.new(
+          ENV.fetch("DATABASE_URL"),
+          ENV.fetch("DATABASE_POOL_SIZE")
+        )
+        self.router = X::Router.new
+        router.instance_exec(db, &block)
+      end
+
+      def serve
+        if router.nil?
+          raise StandardError, "Use API.routes to initialize router."
+        end
+
+        server = Async::HTTP::Server.new(
+          router,
+          Async::HTTP::Endpoint.parse("http://0.0.0.0:#{ENV.fetch("PORT")}")
+        )
+
+        Async do |task|
+          task.async do
+            server.run
+          end
         end
       end
     end
@@ -111,16 +113,8 @@ module X
     attr_accessor :headers, :body
 
     def initialize(headers, body)
-      @headers = {}
-      headers.each do |h|
-        key, val = h.flatten.to_s.split(" ", 2)
-        @headers[key] = val
-      end
+      @headers = headers || {}
       @body = body || {}
-    end
-
-    def blank?(*keys)
-      keys.any? { |k| @body[k].nil? || @body[k] == "" }
     end
   end
 
@@ -147,10 +141,6 @@ module X
 
     def post(path, &handler)
       @routes[path] = handler
-    end
-
-    def halt(status, msg, hint: nil)
-      throw :halt, [status, {err: msg, hint: hint}.compact.to_json]
     end
 
     def call(req)

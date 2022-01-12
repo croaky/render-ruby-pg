@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "date"
+require_relative "api/routes"
 
 usage = <<~EOF
   usage:
@@ -17,14 +18,12 @@ end
 
 if ARGV[0] == "build"
   system("bundle install", out: $stdout)
-  require_relative "lib/x"
-  X::Env.load(root_dir: Dir.pwd)
   X::Database.migrate
   exit 0
 end
 
 if ARGV[0] == "start"
-  system("bundle exec ruby api/routes.rb", out: $stdout)
+  X::API.serve
   exit 0
 end
 
@@ -52,8 +51,6 @@ if ARGV[0] == "db"
   end
 
   if ARGV[1] == "migrate"
-    require_relative "lib/x"
-    X::Env.load(root_dir: Dir.pwd)
     X::Database.migrate
   end
 
