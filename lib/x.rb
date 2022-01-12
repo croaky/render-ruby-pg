@@ -102,7 +102,7 @@ module X
         SQL
       end
       if ENV.fetch("APP_ENV") == "dev"
-        `pg_dump --schema-only x_dev > db/schema.sql`
+        system("pg_dump --schema-only x_dev > db/schema.sql", out: $stdout)
       end
     end
   end
@@ -121,6 +121,18 @@ module X
 
     def blank?(*keys)
       keys.any? { |k| @body[k].nil? || @body[k] == "" }
+    end
+  end
+
+  class Response
+    attr_accessor :status, :headers, :body
+
+    def initialize
+      @headers = {
+        "Accept" => "application/json",
+        "Access-Control-Allow-Methods" => "OPTIONS,GET,POST",
+        "Content-Type" => "application/json"
+      }
     end
   end
 
@@ -143,14 +155,7 @@ module X
 
     def call(req)
       t = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      resp = Protocol::HTTP::Response.new
-      resp.headers = Protocol::HTTP::Headers[{
-        "Accept" => "application/json",
-        "Access-Control-Allow-Methods" => "OPTIONS,GET,POST",
-        "Content-Type" => "application/json"
-      }]
-      puts req.inspect
-      puts req.method
+      resp = X::Response.new
 
       if !["OPTIONS", "GET", "POST"].include?(req.method)
         resp.status = 405
@@ -190,11 +195,7 @@ module X
         }
       end
 
-      if resp.status.nil?
-        resp.status = 500
-      end
-
-      elapsed = (Process.clock_gettime(Process::CLOCK_MONOTONIC) - t).round(3)
+      elapsed = "%.3f" % (Process.clock_gettime(Process::CLOCK_MONOTONIC) - t)
       puts "#{elapsed}s #{resp.status} #{req.method} #{req.path}"
       Protocol::HTTP::Response[resp.status, resp.headers, [resp.body]]
     rescue => err
@@ -206,8 +207,8 @@ module X
         resp.body = %({err: "something went wrong"})
       end
 
-      elapsed = (Process.clock_gettime(Process::CLOCK_MONOTONIC) - t).round(3)
-      puts "#{elapsed}s #{resp.status} #{req.method} #{req.path} #{err.message}"
+      elapsed = "%.3f" % (Process.clock_gettime(Process::CLOCK_MONOTONIC) - t)
+      puts "#{elapsed}s #{resp.status} #{req.method} #{req.path}"
       Protocol::HTTP::Response[resp.status, resp.headers, [resp.body]]
     end
   end

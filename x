@@ -16,7 +16,7 @@ if ARGV.length < 1
 end
 
 if ARGV[0] == "build"
-  `bundle install`
+  system("bundle install", out: $stdout)
   require_relative "lib/x"
   X::Env.load(root_dir: Dir.pwd)
   X::Database.migrate
@@ -24,7 +24,7 @@ if ARGV[0] == "build"
 end
 
 if ARGV[0] == "start"
-  `bundle exec ruby api/routes.rb`
+  system("bundle exec ruby api/routes.rb", out: $stdout)
   exit 0
 end
 
