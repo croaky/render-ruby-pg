@@ -1,9 +1,12 @@
 # X
 
-A lightweight JSON HTTP API with Ruby and Postgres
-meant to be deployed to <https://render.com>.
+A lightweight JSON HTTP API with Ruby and Postgres.
 
-## Develop
+Deploy with Render at <https://dashboard.render.com/blueprints>.
+Click "New Blueprint Instance".
+Enter this repo's URL.
+
+## Local development
 
 Install Ruby 3 and Postgres 14.
 
@@ -66,9 +69,3 @@ Start the web server:
 ```
 
 Open <http://localhost:2000/health>.
-
-## Deploy
-
-Go to <https://dashboard.render.com/blueprints>.
-Click "New Blueprint Instance".
-Enter this repo's URL.
