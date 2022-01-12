@@ -1,3 +1,5 @@
+require "rubygems"
+
 require "async"
 require "async/http/endpoint"
 require "async/http/server"
