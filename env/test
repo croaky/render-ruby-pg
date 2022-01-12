@@ -1,0 +1,4 @@
+APP_ENV=test
+DATABASE_POOL_SIZE=64
+DATABASE_URL=postgres:///render_test?sslmode=disable
+PORT=2001
