@@ -198,7 +198,7 @@ module X
       end
 
       elapsed = "%.3f" % (Process.clock_gettime(Process::CLOCK_MONOTONIC) - t)
-      puts "#{elapsed}s #{resp.status} #{req.method} #{req.path}"
+      puts "#{elapsed}s api #{resp.status} #{req.method} #{req.path}"
       Protocol::HTTP::Response[resp.status, resp.headers, [resp.body]]
     end
   end

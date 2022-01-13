@@ -2,16 +2,10 @@
 databases:
   - name: x_db
     ipAllowList: [] # only allow internal connections
-    postgresMajorVersion: 14 # 14, 13, 12
+    postgresMajorVersion: 14
 
-services:
-  - type: web
-    name: x_web
-    region: oregon # oregon, frankfurt
-    env: ruby
-    buildCommand: "./x build"
-    startCommand: "./x start"
-    healthCheckPath: /health
+envVarGroups:
+  - name: prod
     envVars:
       - key: APP_ENV
         value: prod
@@ -21,3 +15,21 @@ services:
         fromDatabase:
           name: x_db
           property: connectionString
+        sync: false
+
+services:
+  - type: web
+    name: x_web
+    env: ruby
+    buildCommand: "./x build %% ./x db migrate"
+    startCommand: "./x api start"
+    healthCheckPath: /health
+    envVars:
+      - fromGroup: prod
+  - type: worker
+    name: x_worker_queue_listen
+    env: ruby
+    buildCommand: "./x build"
+    startCommand: "./x worker start queue_listen"
+    envVars:
+      - fromGroup: prod
